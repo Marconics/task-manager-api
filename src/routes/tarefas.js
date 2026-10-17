@@ -1,7 +1,8 @@
 const { Router } = require('express');
+const criarTarefa = require('../controllers/criarTarefa');
 
 const router = Router();
 
-// As rotas do CRUD entram aqui, uma issue por vez.
+router.post('/', criarTarefa);
 
 module.exports = router;
