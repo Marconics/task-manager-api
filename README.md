@@ -51,15 +51,62 @@ npm start        # API em http://localhost:3000
 npm test         # roda os testes
 ```
 
+## Endpoints
+
+| Método | Rota | O que faz | Resposta |
+|---|---|---|---|
+| GET | `/health` | Confere se a API está no ar | 200 |
+| POST | `/tarefas` | Cria uma tarefa | 201, ou 400 se faltar título |
+| GET | `/tarefas` | Lista todas as tarefas | 200 |
+| GET | `/tarefas/:id` | Mostra uma tarefa | 200, ou 404 |
+| PUT | `/tarefas/:id` | Atualiza título, descrição e/ou concluída | 200, 400 ou 404 |
+| DELETE | `/tarefas/:id` | Exclui uma tarefa | 204, ou 404 |
+
+Formato de uma tarefa:
+
+```json
+{
+  "id": 1,
+  "titulo": "Preparar o seminário",
+  "descricao": "Slides e demonstração do GitHub",
+  "concluida": false,
+  "criadaEm": "2026-10-16T20:00:00.000Z",
+  "atualizadaEm": "2026-10-16T20:00:00.000Z"
+}
+```
+
+Exemplos com `curl`:
+
+```bash
+# criar
+curl -X POST http://localhost:3000/tarefas \
+  -H "Content-Type: application/json" \
+  -d '{"titulo": "Preparar o seminário", "descricao": "Slides e GitHub"}'
+
+# listar
+curl http://localhost:3000/tarefas
+
+# marcar como concluída
+curl -X PUT http://localhost:3000/tarefas/1 \
+  -H "Content-Type: application/json" \
+  -d '{"concluida": true}'
+
+# excluir
+curl -X DELETE http://localhost:3000/tarefas/1
+```
+
+## Integração contínua
+
+A cada push na `main` e em todo pull request, o GitHub Actions instala as dependências e roda `npm test`. O resultado aparece na aba **Actions** e como ✔️ ou ❌ ao lado de cada commit.
+
 ## Equipe
 
-<!-- Troquem pelos nomes completos e usuários do GitHub -->
-- Integrante 1
-- Integrante 2
-- Integrante 3
-- Integrante 4
-- Integrante 5
-- Integrante 6
-- Integrante 7
-- Integrante 8
-- Integrante 9
+- Marcos
+- Vitória
+- Camilly
+- Lara
+- Melina
+- Lucas
+- Miguel
+- Laís
+- Maria
