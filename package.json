@@ -1,0 +1,22 @@
+{
+  "name": "task-manager-api",
+  "version": "1.0.0",
+  "description": "API REST de gerenciamento de tarefas (MVP com CRUD) feita com Node.js e Express.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0",
+    "supertest": "^7.1.0"
+  },
+  "license": "MIT"
+}
