@@ -1,0 +1,59 @@
+name: CI/CD
+
+# Testes rodam em todo push e pull request. A entrega (deploy) só roda
+# quando o código chega na main e os testes passaram.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Instalar o Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Rodar os testes (unitários e de integração)
+        run: npm test -- --verbose
+
+  entrega:
+    needs: testes
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disparar o deploy no Render
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "Secret RENDER_DEPLOY_HOOK não configurado."
+            exit 1
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK"
+
+      - name: Conferir se a API está no ar (smoke test)
+        env:
+          URL: ${{ vars.RENDER_URL }}
+        run: |
+          # Espera o Render terminar o deploy antes de testar.
+          sleep 90
+          for i in $(seq 1 20); do
+            if curl -fsS "$URL/health" | grep -q '"status":"ok"'; then
+              echo "API no ar em $URL"
+              exit 0
+            fi
+            echo "Ainda não respondeu, tentando de novo..."
+            sleep 15
+          done
+          echo "A API não respondeu a tempo."
+          exit 1
